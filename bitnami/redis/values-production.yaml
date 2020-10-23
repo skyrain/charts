@@ -141,14 +141,14 @@ clusterDomain: cluster.local
 networkPolicy:
   ## Specifies whether a NetworkPolicy should be created
   ##
-  enabled: true
+  enabled: false
 
   ## The Policy model to apply. When set to false, only pods with the correct
   ## client label will have network access to the port Redis is listening
   ## on. When true, Redis will accept connections from any source
   ## (with the correct destination port).
   ##
-  # allowExternal: true
+  allowExternal: true
 
   ## Allow connections from other namespaces. Just set label for namespace and set label for pods (optional).
   ##
@@ -224,7 +224,7 @@ persistence:
   existingClaim:
 
 # Redis port
-redisPort: 6379
+redisPort: 30379
 
 ##
 ## TLS configuration
@@ -361,13 +361,13 @@ master:
   ## Redis Master Service properties
   service:
     ##  Redis Master Service type
-    type: ClusterIP
+    type: NodePort
     port: 6379
 
     ## Specify the nodePort value for the LoadBalancer and NodePort service types.
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
     ##
-    # nodePort:
+    nodePort: 30379
 
     ## Provide any additional annotations which may be required. This can be used to
     ## set the LoadBalancer service type to internal only.
@@ -396,7 +396,7 @@ master:
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, AWS & OpenStack)
     ##
-    # storageClass: "-"
+    storageClass: "rook-cephfs"
     accessModes:
       - ReadWriteOnce
     size: 8Gi
@@ -444,16 +444,20 @@ master:
 ## The rest of the parameters are either optional or, if undefined, will inherit those declared in Redis Master
 ##
 slave:
+  connectMasterViaNodePort:
+    enabled: true
+    masterHost: 10.100.13.5
+    masterNodePort: 30379
   ## Slave Service properties
   service:
     ## Redis Slave Service type
-    type: ClusterIP
+    type: NodePort
     ## Redis port
     port: 6379
     ## Specify the nodePort value for the LoadBalancer and NodePort service types.
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
     ##
-    # nodePort:
+    nodePort: 30378
 
     ## Provide any additional annotations which may be required. This can be used to
     ## set the LoadBalancer service type to internal only.
@@ -583,7 +587,7 @@ slave:
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, AWS & OpenStack)
     ##
-    # storageClass: "-"
+    storageClass: "rook-cephfs"
     accessModes:
       - ReadWriteOnce
     size: 8Gi
@@ -624,7 +628,7 @@ slave:
 ## Prometheus Exporter / Metrics
 ##
 metrics:
-  enabled: true
+  enabled: false
 
   image:
     registry: docker.io

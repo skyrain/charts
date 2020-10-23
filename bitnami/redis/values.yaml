@@ -148,7 +148,7 @@ networkPolicy:
   ## on. When true, Redis will accept connections from any source
   ## (with the correct destination port).
   ##
-  # allowExternal: true
+  allowExternal: true
 
   ## Allow connections from other namespaces. Just set label for namespace and set label for pods (optional).
   ##
@@ -361,13 +361,13 @@ master:
   ## Redis Master Service properties
   service:
     ##  Redis Master Service type
-    type: ClusterIP
+    type: NodePort
     port: 6379
 
     ## Specify the nodePort value for the LoadBalancer and NodePort service types.
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
     ##
-    # nodePort:
+    nodePort: 30379
 
     ## Provide any additional annotations which may be required. This can be used to
     ## set the LoadBalancer service type to internal only.
@@ -396,7 +396,7 @@ master:
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, AWS & OpenStack)
     ##
-    # storageClass: "-"
+    storageClass: "rook-cephfs"
     accessModes:
       - ReadWriteOnce
     size: 8Gi
@@ -447,13 +447,13 @@ slave:
   ## Slave Service properties
   service:
     ## Redis Slave Service type
-    type: ClusterIP
+    type: NodePort
     ## Redis port
     port: 6379
     ## Specify the nodePort value for the LoadBalancer and NodePort service types.
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
     ##
-    # nodePort:
+    nodePort: 30378
 
     ## Provide any additional annotations which may be required. This can be used to
     ## set the LoadBalancer service type to internal only.
@@ -583,7 +583,7 @@ slave:
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, AWS & OpenStack)
     ##
-    # storageClass: "-"
+    storageClass: "rook-cephfs"
     accessModes:
       - ReadWriteOnce
     size: 8Gi

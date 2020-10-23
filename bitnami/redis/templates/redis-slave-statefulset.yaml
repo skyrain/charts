@@ -87,10 +87,17 @@ spec:
           env:
             - name: REDIS_REPLICATION_MODE
               value: slave
+            {{- if .Values.slave.connectMasterViaNodePort.enabled }}
+            - name: REDIS_MASTER_HOST
+              value: {{ .Values.slave.connectMasterViaNodePort.masterHost }}
+            - name: REDIS_MASTER_PORT_NUMBER
+              value: {{ .Values.slave.connectMasterViaNodePort.masterNodePort | quote }}
+            {{- else }}
             - name: REDIS_MASTER_HOST
               value: {{ template "redis.fullname" . }}-master-0.{{ template "redis.fullname" . }}-headless.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}
             - name: REDIS_MASTER_PORT_NUMBER
               value: {{ .Values.redisPort | quote }}
+            {{- end }}
             {{- if .Values.usePassword }}
             {{- if .Values.usePasswordFile }}
             - name: REDIS_PASSWORD_FILE
